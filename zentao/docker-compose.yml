@@ -1,0 +1,9 @@
+zentao:
+  build: .
+  container_name: zentao
+  ports:
+    - 10080:80
+  restart: always
+  volumes:
+    - "./zbox:/opt/zbox"
+
