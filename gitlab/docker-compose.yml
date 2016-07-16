@@ -1,0 +1,43 @@
+web:
+  image: 'gitlab/gitlab-ce:latest'
+  restart: always
+  hostname: 'gitlab.flykis.com'
+  environment:
+    GITLAB_OMNIBUS_CONFIG: |
+      external_url 'https://gitlab.flykis.com'
+      # Add any other gitlab.rb configuration here, each on its own line
+      nginx['redirect_http_to_https'] = true
+      nginx['ssl_certificate'] = "/etc/gitlab/ssl/gitlab.flykis.com.crt"
+      nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/gitlab.flykis.com.key"
+
+      gitlab_rails['gitlab_email_enabled'] = true
+      gitlab_rails['gitlab_email_from'] = 'gitlab@flykis.com'
+      gitlab_rails['gitlab_email_display_name'] = 'gitlab'
+      gitlab_rails['gitlab_email_reply_to'] = 'gitlab@flykis.com'
+
+      gitlab_rails['gravatar_plain_url'] = 'http://gravatar.duoshuo.com/avatar/%{hash}?s=%{size}&d=identicon'
+      gitlab_rails['gravatar_ssl_url'] = 'https://gitlab.flykis.com/duoshuo/avatar/%{hash}?s=%{size}&d=identicon'
+      #gitlab_rails['gravatar_ssl_url'] = 'https://secure.gravatar.duoshuo.com/avatar/%{hash}?s=%{size}&d=identicon'
+
+      gitlab_rails['smtp_enable'] = true
+      gitlab_rails['smtp_address'] = "smtp.flykis.com"
+      gitlab_rails['smtp_port'] = 465
+      gitlab_rails['smtp_user_name'] = "gitlab@flykis.com"
+      gitlab_rails['smtp_password'] = "******"
+      gitlab_rails['smtp_domain'] = "flykis.com"
+      gitlab_rails['smtp_authentication'] = "login"
+      gitlab_rails['smtp_ssl'] = true
+      gitlab_rails['smtp_enable_starttls_auto'] = true
+      gitlab_rails['smtp_tls'] = false
+      gitlab_rails['smtp_openssl_verify_mode'] = 'none'
+
+      gitlab_rails['gitlab_shell_ssh_port'] = 10022
+  ports:
+    - '10080:80'
+    - '10443:443'
+    - '10022:22'
+  volumes:
+    - '/gitlab/ssl:/etc/gitlab/ssl'
+    - '/gitlab/config:/etc/gitlab'
+    - '/gitlab/logs:/var/log/gitlab'
+    - '/gitlab/data:/var/opt/gitlab'
